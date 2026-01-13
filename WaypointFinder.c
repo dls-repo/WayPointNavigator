@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define NUM_POINTS 5
+#define NUM_POINTS 7
 
 typedef struct {
     float x, y;
@@ -15,11 +15,15 @@ typedef struct {
 
 //TODO Create program that is feeding the x and y to the robot rather than pre-defined path
 Waypoint path[NUM_POINTS] = {
+
     {0, 0},
     {1, 0},
     {1, 1},
     {1, 2},
     {2, 2},
+    {2, 3},
+    {3, 3},
+    
 };
 
 int getNextWaypoint(Waypoint *locationData)
@@ -51,12 +55,23 @@ int main()
     if (!getNextWaypoint(&bot.next2)) return 0;
 
     while (1) {
-        robot_step(&bot);
 
+        robot_step(&bot);
         bot.current	= bot.next;
         bot.next	= bot.next2;
 
-        if (!getNextWaypoint(&bot.next2)) break;
+        if (!getNextWaypoint(&bot.next2)) {
+
+            robot_step(&bot);
+            bot.current	= bot.next;
+            bot.next	= bot.next2;
+
+            robot_step(&bot);
+            bot.current	= bot.next;
+            bot.next	= bot.next2;
+            break;
+
+        }
     }
 
     return 0;
